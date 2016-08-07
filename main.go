@@ -2,9 +2,10 @@ package main
 
 import "fmt"
 import "github.com/gin-gonic/gin"
-"github.com/gin-gonic/contrib/sessions"
+import "github.com/gin-gonic/contrib/sessions"
 import "net/http"
 import "os"
+import "io/ioutil"
 
 func main() {
   fmt.Println("s")
@@ -20,7 +21,6 @@ func main() {
   })  
   r.GET("/its_so_easy/redirect", func(c *gin.Context) {
     code := c.Query("code")
-    fmt.Println(code)
     session := sessions.Default(c)
     var team string
     v := session.Get("team")
@@ -29,7 +29,11 @@ func main() {
     url := "https://" + team + ".slack.com/api/oauth.access?client_id=" + 
        os.Getenv("EASY_CID") + "&client_secret=" + os.Getenv("EASY_SEC") + 
        "&code=" + code
-
+    res, _ := http.Get(url)
+    data, _ := ioutil.ReadAll(res.Body) 
+    str := string(data)
+    res.Body.Close()
+    c.JSON(200, str)
   })  
   r.POST("/auth", func(c *gin.Context) {
     team := c.PostForm("team")
