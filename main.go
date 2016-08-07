@@ -3,6 +3,7 @@ package main
 import "fmt"
 import "github.com/gin-gonic/gin"
 import "github.com/gin-gonic/contrib/sessions"
+import "encoding/json"
 import "net/http"
 import "os"
 import "io/ioutil"
@@ -31,9 +32,10 @@ func main() {
        "&code=" + code
     res, _ := http.Get(url)
     data, _ := ioutil.ReadAll(res.Body) 
-    str := string(data)
+    var thing map[string]string
+    json.Unmarshal(data, &thing)
     res.Body.Close()
-    c.JSON(200, str)
+    c.JSON(200, thing["access_token"])
   })  
   r.POST("/auth", func(c *gin.Context) {
     team := c.PostForm("team")
