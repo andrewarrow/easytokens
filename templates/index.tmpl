@@ -4,11 +4,15 @@
 <body>
 
   <div style="font-size: 24px; margin: 20px; padding: 20px; border: 2px solid black;">
-    <form method="post" action="/goto_auth">
-     Slack Team: <input type="text" name="team"/>
+    <form method="post" action="/auth">
+     Team: <input type="text" name="team"/>
     <input type="submit" value="Go"/>
+(for example, if your company has url acme.slack.com your team is "acme")
     </form>
   </div>
 
+<div>
+(this program is open source https://github.com/andrewarrow/easytokens you can run it yourself if you don't want to trust it's not doing anything weird with your tokens.)
+</div>
 </body>
 </html>
