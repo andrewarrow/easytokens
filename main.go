@@ -2,12 +2,15 @@ package main
 
 import "fmt"
 import "github.com/gin-gonic/gin"
-//import "net/http"
+"github.com/gin-gonic/contrib/sessions"
+import "net/http"
 import "os"
 
 func main() {
   fmt.Println("s")
   r := gin.Default()
+  store := sessions.NewCookieStore([]byte("secret"))
+  r.Use(sessions.Sessions("mysession", store))
   r.LoadHTMLGlob("templates/*.tmpl")
   //r.Static("/assets", "./assets")
 
@@ -15,8 +18,24 @@ func main() {
     data := gin.H{"nav_dash": true}
     c.HTML(200, "index.tmpl", data)
   })  
+  r.GET("/its_so_easy/redirect", func(c *gin.Context) {
+    code := c.Query("code")
+    fmt.Println(code)
+    session := sessions.Default(c)
+    var team string
+    v := session.Get("team")
+    team = v.(string)
+
+    url := "https://" + team + ".slack.com/api/oauth.access?client_id=" + 
+       os.Getenv("EASY_CID") + "&client_secret=" + os.Getenv("EASY_SEC") + 
+       "&code=" + code
+
+  })  
   r.POST("/auth", func(c *gin.Context) {
     team := c.PostForm("team")
+    session := sessions.Default(c)
+    session.Set("team", team)
+    session.Save()
     c.Redirect(http.StatusMovedPermanently, "https://" + team + 
      ".slack.com/oauth/authorize?client_id=" + os.Getenv("EASY_CID") + "&scope=client")
   })  
