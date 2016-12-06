@@ -1,4 +1,4 @@
 This is for:
 
-https://github.com/andrewarrow/ises
+https://github.com/andrewarrow/localsdata
 
